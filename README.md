@@ -29,9 +29,12 @@ Example `config.json` file `api/config.json.example`.
 3. Run migrations:
 
     `cd api`
+    
     `bash migration.sh `
 
 4. Start server:
+
     `go run ./`
     
-     ###IN PROGRESS
+    
+### IN PROGRESS
