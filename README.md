@@ -18,8 +18,8 @@ Example `config.json` file `api/config.json.example`.
 
 1. Install packages:
   github.com/gorilla/mux
-  github.com/lib/pq
-  migrate https://github.com/golang-migrate/migrate
+  github.com/lib/pq 
+  https://github.com/golang-migrate/migrate for migrations
 
 
 2. Create config file:
