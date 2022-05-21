@@ -66,7 +66,7 @@ func (a *App) Run(addr string) {
 
 	loggedRouter := a.createLoggingRouter(a.Logger.Writer())
 	a.Logger.Fatal(http.ListenAndServe(addr, loggedRouter))
-
+  
 	done <- true
 }
 
