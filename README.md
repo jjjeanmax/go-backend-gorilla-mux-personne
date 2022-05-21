@@ -30,7 +30,7 @@ Example `config.json` file `api/config.json.example`.
 
     `cd api`
     
-    `bash migration.sh `
+    `bash migration.sh config.json ../migrations `
 
 4. Start server:
 
