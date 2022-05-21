@@ -19,7 +19,7 @@ func (a *App) getPersonById(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["person_id"]) //to int
 	if err != nil {
 		a.responseWithError(w, http.StatusBadRequest, "Invalid Person Id")
-    return
+		return
 	}
 	p := Person{PersonID: id}
 	//geting error return's in model_querry
@@ -309,11 +309,11 @@ func (a *App) responseWithError(w http.ResponseWriter, statusCode int, message s
 }
 
 // return a json format response data
-func responseWithJSON(w http.ResponseWriter, statusCode int, payload interface{}) {
+func (a *App) responseWithJSON(w http.ResponseWriter, statusCode int, payload interface{}) {
 	//encode response for the client marshall to return json encoding
 	response, _ := json.Marshal(payload)
-	
-  w.Header().Set("Content-Type", "application/json") //to json
+
+	w.Header().Set("Content-Type", "application/json") //to json
 	w.WriteHeader(statusCode)
 	w.Write(response)
 }
