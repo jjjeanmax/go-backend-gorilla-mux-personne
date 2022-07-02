@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type App struct {
@@ -20,7 +21,7 @@ type App struct {
 	reqCount    uint32
 }
 
-// method to initialise our db
+// method to initialise db and mux router
 func (a *App) InitializeDb(user, password, dbname, port, host string) {
 
 	a.Logger = log.New(os.Stdout, "", log.LstdFlags)
@@ -43,31 +44,31 @@ func (a *App) InitializeDb(user, password, dbname, port, host string) {
 }
 
 // methods to initialize all the routes (all methos in handlers)
+
 func (a *App) initialiseRouters() {
+	a.Router.Use(a.Cors)
+	a.Router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	a.Router.HandleFunc("/shutdown", a.ShutdownHandler)
-	a.Router.HandleFunc("/api/person/{person_id:[0-9]+}", a.getPersonById).Methods("GET")
-	a.Router.HandleFunc("/api/persons", a.getAllPersons).Methods("GET")
-	a.Router.HandleFunc("/api/person/alive", a.getPersonAlive).Methods("GET")
-	a.Router.HandleFunc("/api/person/dead", a.getPersonDeaded).Methods("GET")
-	a.Router.HandleFunc("/api/countries", a.getAllCountry).Methods("GET")
-	a.Router.HandleFunc("/api/country/{country_id:[0-9]+}", a.getCountryById).Methods("GET")
-	a.Router.HandleFunc("/api/person/country/{country_id:[0-9]+}", a.getPersonSameCountry).Methods("GET")
-	a.Router.HandleFunc("/api/create/country", a.createCountry).Methods("POST")
-	a.Router.HandleFunc("/api/create/person", a.createPerson).Methods("POST")
-	a.Router.HandleFunc("/api/update/country/{country_id:[0-9]+}", a.updateCountry).Methods("PUT")
-	a.Router.HandleFunc("/api/update/person/{person_id:[0-9]+}", a.updatePerson).Methods("PUT")
-	a.Router.HandleFunc("/api/delete/country/{country_id:[0-9]+}", a.deleteCountry).Methods("DELETE")
-	a.Router.HandleFunc("/api/delete/person/{person_id:[0-9]+}", a.deletePerson).Methods("DELETE")
+	a.Router.HandleFunc("/api/person/{person_id:[0-9]+}", a.GetPersonById).Methods("GET")
+	a.Router.HandleFunc("/api/persons", a.GetAllPersons).Methods("GET")
+	a.Router.HandleFunc("/api/person/alive", a.GetPersonAlive).Methods("GET")
+	a.Router.HandleFunc("/api/person/dead", a.GetPersonDeaded).Methods("GET")
+	a.Router.HandleFunc("/api/countries", a.GetAllCountry).Methods("GET")
+	a.Router.HandleFunc("/api/country/{country_id:[0-9]+}", a.GetCountryById).Methods("GET")
+	a.Router.HandleFunc("/api/person/country/{country_id:[0-9]+}", a.GetPersonSameCountry).Methods("GET")
+	a.Router.HandleFunc("/api/create/country", a.CreateCountry).Methods("POST")
+	a.Router.HandleFunc("/api/create/person", a.CreatePerson).Methods("POST")
+	a.Router.HandleFunc("/api/update/country/{country_id:[0-9]+}", a.UpdateCountry).Methods("PUT")
+	a.Router.HandleFunc("/api/update/person/{person_id:[0-9]+}", a.UpdatePerson).Methods("PUT")
+	a.Router.HandleFunc("/api/delete/country/{country_id:[0-9]+}", a.DeleteCountry).Methods("DELETE")
+	a.Router.HandleFunc("/api/delete/person/{person_id:[0-9]+}", a.DeletePerson).Methods("DELETE")
 }
 
 //method run to start our app (une addresse et un port addr est le port)
 func (a *App) Run(addr string) {
-	done := make(chan bool)
 
-	loggedRouter := a.createLoggingRouter(a.Logger.Writer())
+	loggedRouter := a.CreateLoggingRouter(a.Logger.Writer())
 	a.Logger.Fatal(http.ListenAndServe(addr, loggedRouter))
-  
-	done <- true
 }
 
 // method to shutdown server

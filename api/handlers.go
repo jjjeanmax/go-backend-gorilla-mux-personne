@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -14,16 +15,43 @@ import (
 //	QUERRIES METHODS
 // ****************
 
-func (a *App) getPersonById(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)                        //get data in request return map[string]string
+//params for create and update person
+type PersonCreateUpdateParam struct {
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+	BirthDay  time.Time `json:"birth_day"`
+	InLife    bool      `json:"in_life"`
+	CountryID int       `json:"country_id"`
+}
+
+//params for create and update Country
+type CountryCreateUpdateParam struct {
+	CountryName string `json:"name_country"`
+	Continent   string `json:"continent"`
+	Capital     string `json:"capital"`
+}
+
+// Methods Get person by id
+// Get Person by id
+// GetPersonById godoc
+// @Summary Get person by id
+// @Description Get person by id
+// @Tags Person
+// @Accept json
+// @Produce json
+// @Param        person_id   path      int  true  "PersonID"
+// @Success 200
+// @Router /api/person/{person_id} [get]
+func (a *App) GetPersonById(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)                        //Get data in request return map[string]string
 	id, err := strconv.Atoi(vars["person_id"]) //to int
 	if err != nil {
 		a.responseWithError(w, http.StatusBadRequest, "Invalid Person Id")
 		return
 	}
 	p := Person{PersonID: id}
-	//geting error return's in model_querry
-	err = p.querryGetPersonById(a.DB)
+	//Geting error return's in model_querry
+	err = p.QuerryGetPersonById(a.DB)
 
 	if err != nil {
 		switch err {
@@ -38,8 +66,18 @@ func (a *App) getPersonById(w http.ResponseWriter, r *http.Request) {
 	a.responseWithJSON(w, http.StatusOK, p)
 }
 
-// Methods get all Person
-func (a *App) getAllPersons(w http.ResponseWriter, r *http.Request) {
+// Methods Get All Persons
+// GetAllPersons godoc
+// @Summary Get all persons
+// @Description Get all persons
+// @Tags Person
+// @Accept json
+// @Produce json
+// @Param        count   query  int   true  "Count" Format(count)
+// @Param        start   query  int   true  "Start" Format(start)
+// @Success 200
+// @Router /api/persons [get]
+func (a *App) GetAllPersons(w http.ResponseWriter, r *http.Request) {
 	countQuerry := r.URL.Query().Get("count")
 	startQuerry := r.URL.Query().Get("start")
 
@@ -54,7 +92,7 @@ func (a *App) getAllPersons(w http.ResponseWriter, r *http.Request) {
 	p := Person{}
 
 	//get list of person or error return in model_querries
-	persons, err := p.querryGetAllPersons(a.DB, count, start)
+	persons, err := p.QuerryGetAllPersons(a.DB, count, start)
 	if err != nil {
 		a.responseWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -62,10 +100,18 @@ func (a *App) getAllPersons(w http.ResponseWriter, r *http.Request) {
 	a.responseWithJSON(w, http.StatusOK, persons)
 }
 
-//get Person Alive return liste of personne
-func (a *App) getPersonAlive(w http.ResponseWriter, r *http.Request) {
+// Get Person Alive return liste of personne
+// GetPersonAlive godoc
+// @Summary get Person Alive
+// @Description get Person Alive
+// @Tags Person
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /api/person/alive [get]
+func (a *App) GetPersonAlive(w http.ResponseWriter, r *http.Request) {
 	p := Person{}
-	persons, err := p.querryGetPersonAlive(a.DB)
+	persons, err := p.QuerryGetPersonAlive(a.DB)
 	if err != nil {
 		a.responseWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -73,10 +119,18 @@ func (a *App) getPersonAlive(w http.ResponseWriter, r *http.Request) {
 	a.responseWithJSON(w, http.StatusOK, persons)
 }
 
-//get Person Alive return liste of personne
-func (a *App) getPersonDeaded(w http.ResponseWriter, r *http.Request) {
+//get Person deaded return liste of personne
+// GetPersonDeaded godoc
+// @Summary get Person deaded
+// @Description get Person Deaded
+// @Tags Person
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /api/person/dead [get]
+func (a *App) GetPersonDeaded(w http.ResponseWriter, r *http.Request) {
 	p := Person{}
-	persons, err := p.querryGetPersonDeaded(a.DB)
+	persons, err := p.QuerryGetPersonDeaded(a.DB)
 	if err != nil {
 		a.responseWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -85,8 +139,18 @@ func (a *App) getPersonDeaded(w http.ResponseWriter, r *http.Request) {
 }
 
 //get all country
-func (a *App) getAllCountry(w http.ResponseWriter, r *http.Request) {
-	countQuerry := r.URL.Query().Get("count") //Querry parse row and return corr value . get recuparate vaule of key/ URL for client request
+// GetAllCountry godoc
+// @Summary Get all country
+// @Description Get all country
+// @Tags Country
+// @Accept json
+// @Produce json
+// @Param        count   query  int   true  "Count" Format(count)
+// @Param        start   query  int   true  "Start" Format(start)
+// @Success 200
+// @Router /api/countries [get]
+func (a *App) GetAllCountry(w http.ResponseWriter, r *http.Request) {
+	countQuerry := r.URL.Query().Get("count") //Querry parse row and return corr value . Get recuparate vaule of key/ URL for client request
 	startQuerry := r.URL.Query().Get("start")
 
 	//convert to int
@@ -102,7 +166,7 @@ func (a *App) getAllCountry(w http.ResponseWriter, r *http.Request) {
 	c := Country{}
 	//pour recupere la valeur de la metodes je creer l'instance de la structure pointee par la methode
 	//et cette instance est affectee a la methode
-	countries, err := c.querryGetAllCountry(a.DB, count, start)
+	countries, err := c.QuerryGetAllCountry(a.DB, count, start)
 	if err != nil {
 		a.responseWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -110,8 +174,17 @@ func (a *App) getAllCountry(w http.ResponseWriter, r *http.Request) {
 	a.responseWithJSON(w, http.StatusOK, countries)
 }
 
-// get country by id
-func (a *App) getCountryById(w http.ResponseWriter, r *http.Request) {
+//get Country by id
+// GetCountryById godoc
+// @Summary Get country by id
+// @Description Get country by id
+// @Tags Country
+// @Accept json
+// @Produce json
+// @Param        country_id   path      int  true  "CountryID"
+// @Success 200
+// @Router /api/country/{country_id} [get]
+func (a *App) GetCountryById(w http.ResponseWriter, r *http.Request) {
 	// vars retourne la variable contenue dans la request (map[string]string)
 	vars := mux.Vars(r)
 
@@ -126,7 +199,7 @@ func (a *App) getCountryById(w http.ResponseWriter, r *http.Request) {
 	c := Country{CountryID: country_id}
 
 	//return error(id not found or badgetway)
-	err = c.querryGetCountryById(a.DB)
+	err = c.QuerryGetCountryById(a.DB)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -142,7 +215,16 @@ func (a *App) getCountryById(w http.ResponseWriter, r *http.Request) {
 }
 
 //get person provide the same country
-func (a *App) getPersonSameCountry(w http.ResponseWriter, r *http.Request) {
+// GetPersonSameCountry godoc
+// @Summary Get person provide the same country
+// @Description Get person provide the same country
+// @Tags Person
+// @Accept json
+// @Produce json
+// @Param        country_id   path      int  true  "CountryID"
+// @Success 200
+// @Router /api/person/country/{country_id} [get]
+func (a *App) GetPersonSameCountry(w http.ResponseWriter, r *http.Request) {
 
 	//get country_id in request and cast to int
 	vars := mux.Vars(r)
@@ -154,7 +236,7 @@ func (a *App) getPersonSameCountry(w http.ResponseWriter, r *http.Request) {
 
 	//creer une instance de la structure et filter par les country_id
 	p := Person{CountryID: country_id}
-	persons, err := p.querryGetPersonSameCountry(a.DB)
+	persons, err := p.QuerryGetPersonSameCountry(a.DB)
 	if err != nil {
 		a.responseWithError(w, http.StatusNotFound, "Person Not Found!")
 		return
@@ -163,7 +245,16 @@ func (a *App) getPersonSameCountry(w http.ResponseWriter, r *http.Request) {
 }
 
 //create Country
-func (a *App) createCountry(w http.ResponseWriter, r *http.Request) {
+// CreateCountry godoc
+// @Summary Create a new country
+// @Description Create a new Country
+// @Tags Country
+// @Accept json
+// @Produce json
+// @Param        person   body    CountryCreateUpdateParam true "Country Data"
+// @Success 201
+// @Router /api/create/country [post]
+func (a *App) CreateCountry(w http.ResponseWriter, r *http.Request) {
 	var c Country
 	//decod payload in body
 	decoder := json.NewDecoder(r.Body)
@@ -177,7 +268,7 @@ func (a *App) createCountry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//get error send in model_querries
-	err = c.querryCreateCountry(a.DB)
+	err = c.QuerryCreateCountry(a.DB)
 	if err != nil {
 		a.responseWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -185,18 +276,27 @@ func (a *App) createCountry(w http.ResponseWriter, r *http.Request) {
 	a.responseWithJSON(w, http.StatusCreated, c)
 }
 
-//create person
-func (a *App) createPerson(w http.ResponseWriter, r *http.Request) {
+//create Person
+// CreatePerson godoc
+// @Summary Create a new Person
+// @Description Create a new Person
+// @Tags Person
+// @Accept json
+// @Produce json
+// @Param        person   body    PersonCreateUpdateParam true "Person Data"
+// @Success 201
+// @Router /api/create/person [post]
+func (a *App) CreatePerson(w http.ResponseWriter, r *http.Request) {
 	var p Person
 	decoder := json.NewDecoder(r.Body) //decode notre payload
 	err := decoder.Decode(&p)          //decode la variable de notre piinter
-	fmt.Println(*&p.BirthDay)
+	fmt.Println(p.BirthDay)
 	if err != nil {
 		fmt.Println(err)
 		a.responseWithError(w, http.StatusBadRequest, "Invalid Request Payload")
 		return
 	}
-	err = p.querryCreatePerson(a.DB)
+	err = p.QuerryCreatePerson(a.DB)
 	if err != nil {
 		fmt.Println(err)
 		a.responseWithError(w, http.StatusInternalServerError, err.Error())
@@ -205,8 +305,18 @@ func (a *App) createPerson(w http.ResponseWriter, r *http.Request) {
 	a.responseWithJSON(w, http.StatusCreated, p)
 }
 
-//update country
-func (a *App) updateCountry(w http.ResponseWriter, r *http.Request) {
+// Update country
+// UpdateCountry godoc
+// @Summary Update Country
+// @Description update country by id
+// @Tags Country
+// @Accept json
+// @Produce json
+// @Param        country_id   path      int  true  "CountryID"
+// @Param        country   body    CountryCreateUpdateParam true "Country Data"
+// @Success 200
+// @Router /api/update/country/{country_id} [put]
+func (a *App) UpdateCountry(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	country_id, err := strconv.Atoi(vars["country_id"])
 	if err != nil {
@@ -223,7 +333,20 @@ func (a *App) updateCountry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = c.querryUpdateCountry(a.DB)
+	//check if country exist
+	err = c.QuerryGetCountryById(a.DB)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			a.responseWithError(w, http.StatusNotFound, "Country Not Found")
+			return
+		default:
+			a.responseWithError(w, http.StatusBadGateway, err.Error())
+			return
+		}
+	}
+
+	err = c.QuerryUpdateCountry(a.DB)
 	if err != nil {
 		a.responseWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -231,8 +354,18 @@ func (a *App) updateCountry(w http.ResponseWriter, r *http.Request) {
 	a.responseWithJSON(w, http.StatusOK, c)
 }
 
-//update person
-func (a *App) updatePerson(w http.ResponseWriter, r *http.Request) {
+// Update person
+// UpdatePerson godoc
+// @Summary Update Person
+// @Description update person by id
+// @Tags Person
+// @Accept json
+// @Produce json
+// @Param        person_id   path      int  true  "PersonID"
+// @Param        person   body    PersonCreateUpdateParam true "Person Data"
+// @Success 200
+// @Router /api/update/person/{person_id} [put]
+func (a *App) UpdatePerson(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	person_id, err := strconv.Atoi(vars["person_id"])
 	if err != nil {
@@ -250,7 +383,20 @@ func (a *App) updatePerson(w http.ResponseWriter, r *http.Request) {
 		a.responseWithError(w, http.StatusBadRequest, "Invalid Request Payload")
 		return
 	}
-	err = p.querryUpdatePerson(a.DB)
+
+	//check if person exist
+	err = p.QuerryGetPersonById(a.DB)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			a.responseWithError(w, http.StatusNotFound, "Person Not Found")
+			return
+		default:
+			a.responseWithError(w, http.StatusBadGateway, err.Error())
+			return
+		}
+	}
+	err = p.QuerryUpdatePerson(a.DB)
 	if err != nil {
 		a.responseWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -258,8 +404,17 @@ func (a *App) updatePerson(w http.ResponseWriter, r *http.Request) {
 	a.responseWithJSON(w, http.StatusOK, p)
 }
 
-//delete country
-func (a *App) deleteCountry(w http.ResponseWriter, r *http.Request) {
+// Delete country
+// DeleteCountry godoc
+// @Summary Delete Country
+// @Description Delete Country by id
+// @Tags Country
+// @Accept json
+// @Produce json
+// @Param        country_id   path      int  true  "CountryID"
+// @Success 200
+// @Router /api/delete/country/{country_id} [delete]
+func (a *App) DeleteCountry(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	country_id, err := strconv.Atoi(vars["country_id"])
 	if err != nil {
@@ -268,7 +423,21 @@ func (a *App) deleteCountry(w http.ResponseWriter, r *http.Request) {
 	}
 	var c Country
 	c.CountryID = country_id
-	err = c.querryDeleteCountry(a.DB)
+
+	//check if country exist
+	err = c.QuerryGetCountryById(a.DB)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			a.responseWithError(w, http.StatusNotFound, "Country Not Found")
+			return
+		default:
+			a.responseWithError(w, http.StatusBadGateway, err.Error())
+			return
+		}
+	}
+
+	err = c.QuerryDeleteCountry(a.DB)
 	if err != nil {
 		a.responseWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -276,8 +445,17 @@ func (a *App) deleteCountry(w http.ResponseWriter, r *http.Request) {
 	a.responseWithJSON(w, http.StatusOK, delete_message(country_id))
 }
 
-//delete Person
-func (a *App) deletePerson(w http.ResponseWriter, r *http.Request) {
+// Delete Person
+// DeletePerson godoc
+// @Summary Delete Person
+// @Description Delete Person by id
+// @Tags Person
+// @Accept json
+// @Produce json
+// @Param        person_id   path      int  true  "PersonID"
+// @Success 200
+// @Router /api/delete/person/{person_id} [delete]
+func (a *App) DeletePerson(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	person_id, err := strconv.Atoi(vars["person_id"])
 
@@ -286,7 +464,21 @@ func (a *App) deletePerson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p := Person{PersonID: person_id}
-	err = p.querryDeletePerson(a.DB)
+
+	//check if person exist
+	err = p.QuerryGetPersonById(a.DB)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			a.responseWithError(w, http.StatusNotFound, "Person Not Found")
+			return
+		default:
+			a.responseWithError(w, http.StatusBadGateway, err.Error())
+			return
+		}
+	}
+
+	err = p.QuerryDeletePerson(a.DB)
 	if err != nil {
 		a.responseWithError(w, http.StatusInternalServerError, err.Error())
 		return

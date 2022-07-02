@@ -1,5 +1,15 @@
 package main
 
+import _ "gorilla-mux-person/docs"
+
+// @title Golang API Person Swagger
+// @version 1.0
+// @description This is an auto-generated API Docs Person.
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email your@mail.com
+// @in header
+// @BasePath /
 func main() {
 	//get our config settings value
 	APP_DB_USERNAME := ConfigsDb()[0]

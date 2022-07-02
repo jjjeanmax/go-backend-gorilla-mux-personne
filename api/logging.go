@@ -8,6 +8,6 @@ import (
 )
 
 //methode recoit une interface et retourne une reponse a notre requette
-func (a *App) createLoggingRouter(out io.Writer) http.Handler {
+func (a *App) CreateLoggingRouter(out io.Writer) http.Handler {
 	return handlers.LoggingHandler(out, a.Router)
 }

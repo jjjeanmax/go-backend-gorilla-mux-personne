@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-/*"TODO":si on supprime le pays on supprime les habitants du pays (delete cascade)*/
+//*"TODO":si on supprime le pays on supprime les habitants du pays (delete cascade)*/
+//TODO: replace countryId in person Data by country name
 
 type Country struct {
 	CountryID   int    `json:"country_id"`
@@ -32,11 +33,11 @@ const (
 var now = time.Now().UTC()
 
 // *************************************************************
-// all this Method are using in the handler (doing a sql querry)
+// all this Method are using in the handler (doing a sql Querry)
 // *************************************************************
 
 //method to get person by id return err
-func (p *Person) querryGetPersonById(db *sql.DB) error {
+func (p *Person) QuerryGetPersonById(db *sql.DB) error {
 	return db.QueryRow(
 		"SELECT first_name,last_name,birth_day,in_life,country_id,registry from person WHERE person_id=$1",
 		p.PersonID,
@@ -45,7 +46,7 @@ func (p *Person) querryGetPersonById(db *sql.DB) error {
 }
 
 //method to get all person return err () ou list de person
-func (p *Person) querryGetAllPersons(db *sql.DB, count, start int) ([]Person, error) {
+func (p *Person) QuerryGetAllPersons(db *sql.DB, count, start int) ([]Person, error) {
 	rows, err := db.Query(
 		"SELECT person_id,first_name,last_name,birth_day,in_life,country_id,registry from person LIMIT $1 OFFSET $2",
 		count, start,
@@ -75,7 +76,7 @@ func (p *Person) querryGetAllPersons(db *sql.DB, count, start int) ([]Person, er
 }
 
 //methods get person in live
-func (p *Person) querryGetPersonAlive(db *sql.DB) ([]Person, error) {
+func (p *Person) QuerryGetPersonAlive(db *sql.DB) ([]Person, error) {
 	rows, err := db.Query(
 		"SELECT person_id,first_name,last_name,birth_day,in_life,country_id,registry from person WHERE in_life=TRUE",
 	)
@@ -102,9 +103,9 @@ func (p *Person) querryGetPersonAlive(db *sql.DB) ([]Person, error) {
 }
 
 //methos to get person deaded
-func (p *Person) querryGetPersonDeaded(db *sql.DB) ([]Person, error) {
+func (p *Person) QuerryGetPersonDeaded(db *sql.DB) ([]Person, error) {
 	rows, err := db.Query(
-		"SELECT person_id,first_name,last_name,birth_day,in_life,country_id,registry from person WHERE in_life=TRUE",
+		"SELECT person_id,first_name,last_name,birth_day,in_life,country_id,registry from person WHERE in_life=FALSE",
 	)
 	if err != nil {
 		return nil, err
@@ -125,7 +126,7 @@ func (p *Person) querryGetPersonDeaded(db *sql.DB) ([]Person, error) {
 }
 
 //get all country
-func (c *Country) querryGetAllCountry(db *sql.DB, count, start int) ([]Country, error) {
+func (c *Country) QuerryGetAllCountry(db *sql.DB, count, start int) ([]Country, error) {
 	rows, err := db.Query(
 		"SELECT country_id,name_country,continent,capital from country LIMIT $1 OFFSET $2", count, start,
 	)
@@ -150,15 +151,15 @@ func (c *Country) querryGetAllCountry(db *sql.DB, count, start int) ([]Country, 
 }
 
 //get country by country_id
-func (c *Country) querryGetCountryById(db *sql.DB) error {
-	//QuerrRow return row.sql // i use scan to copy values of pointer and return err
+func (c *Country) QuerryGetCountryById(db *sql.DB) error {
+	//Querryow return row.sql // i use scan to copy values of pointer and return err
 	return db.QueryRow(
 		"SELECT country_id,name_country,continent,capital from country WHERE country_id=$1", c.CountryID,
 	).Scan(&c.CountryID, &c.CountryName, &c.Continent, &c.Capital)
 }
 
 //get persons in the same country
-func (p *Person) querryGetPersonSameCountry(db *sql.DB) ([]Person, error) {
+func (p *Person) QuerryGetPersonSameCountry(db *sql.DB) ([]Person, error) {
 	rows, err := db.Query(
 		"SELECT person_id,first_name,last_name,birth_day,in_life,country_id,registry from person WHERE country_id=$1", p.CountryID,
 	)
@@ -181,8 +182,8 @@ func (p *Person) querryGetPersonSameCountry(db *sql.DB) ([]Person, error) {
 	return persons, err
 }
 
-//create country
-func (p *Person) querryCreatePerson(db *sql.DB) error {
+//create person
+func (p *Person) QuerryCreatePerson(db *sql.DB) error {
 	return db.QueryRow(
 		"INSERT INTO person(person_id,first_name,last_name,birth_day,in_life,country_id,registry) VALUES(nextval('persone_sequence'),$1,$2,$3,$4,$5,$6) RETURNING person_id,first_name,last_name,birth_day,in_life,country_id,registry",
 		p.FirstName,
@@ -203,7 +204,7 @@ func (p *Person) querryCreatePerson(db *sql.DB) error {
 }
 
 //create country
-func (c *Country) querryCreateCountry(db *sql.DB) error {
+func (c *Country) QuerryCreateCountry(db *sql.DB) error {
 	return db.QueryRow(
 		"INSERT INTO country(country_id,name_country,continent,capital) VALUES(nextval('country_sequence'),$1,$2,$3) RETURNING country_id,name_country,continent,capital",
 		c.CountryName,
@@ -218,7 +219,7 @@ func (c *Country) querryCreateCountry(db *sql.DB) error {
 }
 
 //update country
-func (c *Country) querryUpdateCountry(db *sql.DB) error {
+func (c *Country) QuerryUpdateCountry(db *sql.DB) error {
 	//db.exc return sql resul or err
 	_, err := db.Exec(
 		"UPDATE country SET name_country=$1,continent=$2,capital=$3 WHERE country_id=$4",
@@ -228,7 +229,7 @@ func (c *Country) querryUpdateCountry(db *sql.DB) error {
 }
 
 //update person
-func (p *Person) querryUpdatePerson(db *sql.DB) error {
+func (p *Person) QuerryUpdatePerson(db *sql.DB) error {
 	_, err := db.Exec(
 		"UPDATE person SET first_name=$1,last_name=$2,birth_day=$3,in_life=$4,country_id=$5,registry=$6 WHERE person_id=$7",
 		p.FirstName, p.LastName, p.BirthDay.Format(YYYYMMDD), p.InLife, p.CountryID, now.Format(DDMMYYYYhhmmss), p.PersonID,
@@ -237,7 +238,7 @@ func (p *Person) querryUpdatePerson(db *sql.DB) error {
 }
 
 //delete country
-func (c *Country) querryDeleteCountry(db *sql.DB) error {
+func (c *Country) QuerryDeleteCountry(db *sql.DB) error {
 	_, err := db.Exec(
 		"DELETE FROM country WHERE country_id=$1", c.CountryID,
 	)
@@ -245,7 +246,7 @@ func (c *Country) querryDeleteCountry(db *sql.DB) error {
 }
 
 //delete person
-func (p *Person) querryDeletePerson(db *sql.DB) error {
+func (p *Person) QuerryDeletePerson(db *sql.DB) error {
 	_, err := db.Exec(
 		"DELETE FROM person WHERE person_id=$1", p.PersonID,
 	)

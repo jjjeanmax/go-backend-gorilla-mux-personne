@@ -1,0 +1,297 @@
+basePath: /
+definitions:
+  main.CountryCreateUpdateParam:
+    properties:
+      capital:
+        type: string
+      continent:
+        type: string
+      name_country:
+        type: string
+    type: object
+  main.PersonCreateUpdateParam:
+    properties:
+      birth_day:
+        type: string
+      country_id:
+        type: integer
+      first_name:
+        type: string
+      in_life:
+        type: boolean
+      last_name:
+        type: string
+    type: object
+info:
+  contact:
+    email: your@mail.com
+    name: API Support
+  description: This is an auto-generated API Docs Person.
+  termsOfService: http://swagger.io/terms/
+  title: Golang API Person Swagger
+  version: "1.0"
+paths:
+  /api/countries:
+    get:
+      consumes:
+      - application/json
+      description: Get all country
+      parameters:
+      - description: Count
+        format: count
+        in: query
+        name: count
+        required: true
+        type: integer
+      - description: Start
+        format: start
+        in: query
+        name: start
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Get all country
+      tags:
+      - Country
+  /api/country/{country_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get country by id
+      parameters:
+      - description: CountryID
+        in: path
+        name: country_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Get country by id
+      tags:
+      - Country
+  /api/create/country:
+    post:
+      consumes:
+      - application/json
+      description: Create a new Country
+      parameters:
+      - description: Country Data
+        in: body
+        name: person
+        required: true
+        schema:
+          $ref: '#/definitions/main.CountryCreateUpdateParam'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+      summary: Create a new country
+      tags:
+      - Country
+  /api/create/person:
+    post:
+      consumes:
+      - application/json
+      description: Create a new Person
+      parameters:
+      - description: Person Data
+        in: body
+        name: person
+        required: true
+        schema:
+          $ref: '#/definitions/main.PersonCreateUpdateParam'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+      summary: Create a new Person
+      tags:
+      - Person
+  /api/delete/country/{country_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Country by id
+      parameters:
+      - description: CountryID
+        in: path
+        name: country_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Delete Country
+      tags:
+      - Country
+  /api/delete/person/{person_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Person by id
+      parameters:
+      - description: PersonID
+        in: path
+        name: person_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Delete Person
+      tags:
+      - Person
+  /api/person/{person_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get person by id
+      parameters:
+      - description: PersonID
+        in: path
+        name: person_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Get person by id
+      tags:
+      - Person
+  /api/person/alive:
+    get:
+      consumes:
+      - application/json
+      description: get Person Alive
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: get Person Alive
+      tags:
+      - Person
+  /api/person/country/{country_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get person provide the same country
+      parameters:
+      - description: CountryID
+        in: path
+        name: country_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Get person provide the same country
+      tags:
+      - Person
+  /api/person/dead:
+    get:
+      consumes:
+      - application/json
+      description: get Person Deaded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: get Person deaded
+      tags:
+      - Person
+  /api/persons:
+    get:
+      consumes:
+      - application/json
+      description: Get all persons
+      parameters:
+      - description: Count
+        format: count
+        in: query
+        name: count
+        required: true
+        type: integer
+      - description: Start
+        format: start
+        in: query
+        name: start
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Get all persons
+      tags:
+      - Person
+  /api/update/country/{country_id}:
+    put:
+      consumes:
+      - application/json
+      description: update country by id
+      parameters:
+      - description: CountryID
+        in: path
+        name: country_id
+        required: true
+        type: integer
+      - description: Country Data
+        in: body
+        name: country
+        required: true
+        schema:
+          $ref: '#/definitions/main.CountryCreateUpdateParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Update Country
+      tags:
+      - Country
+  /api/update/person/{person_id}:
+    put:
+      consumes:
+      - application/json
+      description: update person by id
+      parameters:
+      - description: PersonID
+        in: path
+        name: person_id
+        required: true
+        type: integer
+      - description: Person Data
+        in: body
+        name: person
+        required: true
+        schema:
+          $ref: '#/definitions/main.PersonCreateUpdateParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Update Person
+      tags:
+      - Person
+swagger: "2.0"
