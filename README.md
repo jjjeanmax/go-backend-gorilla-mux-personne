@@ -17,9 +17,9 @@ Example `config.json` file `api/config.json.example`.
 ## Start
 
 1. Install packages:
-  github.com/gorilla/mux
-  github.com/lib/pq 
-  https://github.com/golang-migrate/migrate for migrations
+  - github.com/gorilla/mux
+  - github.com/lib/pq 
+  - https://github.com/golang-migrate/migrate for migrations
 
 
 2. Create config file:
