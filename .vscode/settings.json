@@ -1,0 +1,5 @@
+{
+    "go.toolsEnvVars": {
+        "GOENV": "/home/maxime/.config/go/env"
+    }
+}

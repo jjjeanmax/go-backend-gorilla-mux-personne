@@ -10,13 +10,14 @@ import _ "gorilla-mux-person/docs"
 // @contact.email your@mail.com
 // @in header
 // @BasePath /
+// @securityDefinitions.basic  BasicAuth
 func main() {
 	//get our config settings value
-	APP_DB_USERNAME := ConfigsDb()[0]
-	APP_DB_PASSWORD := ConfigsDb()[1]
-	APP_DB_NAME := ConfigsDb()[2]
-	DB_PORT := ConfigsDb()[3]
-	DB_HOST := ConfigsDb()[4]
+	APP_DB_USERNAME := Configs()[0]
+	APP_DB_PASSWORD := Configs()[1]
+	APP_DB_NAME := Configs()[2]
+	DB_PORT := Configs()[3]
+	DB_HOST := Configs()[4]
 
 	//create an instance App
 	a := App{}

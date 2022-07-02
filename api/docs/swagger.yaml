@@ -294,4 +294,7 @@ paths:
       summary: Update Person
       tags:
       - Person
+securityDefinitions:
+  BasicAuth:
+    type: basic
 swagger: "2.0"

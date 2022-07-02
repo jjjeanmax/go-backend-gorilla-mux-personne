@@ -290,7 +290,6 @@ func (a *App) CreatePerson(w http.ResponseWriter, r *http.Request) {
 	var p Person
 	decoder := json.NewDecoder(r.Body) //decode notre payload
 	err := decoder.Decode(&p)          //decode la variable de notre piinter
-	fmt.Println(p.BirthDay)
 	if err != nil {
 		fmt.Println(err)
 		a.responseWithError(w, http.StatusBadRequest, "Invalid Request Payload")
